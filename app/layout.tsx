@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: "ሰነዶች | Senedoch",
   description:
     "የሰነዶች ማረጋገጫና ምዝገባ (DARS) የአማርኛ ሰነድ ቅጾች — Editable & Free Amharic Legal Templates",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

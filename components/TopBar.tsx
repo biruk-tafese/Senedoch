@@ -44,8 +44,11 @@ export function TopBar({ lang, onToggleLang, backHref }: TopBarProps) {
             </Link>
           )}
           <Link href="/" className="flex items-center gap-2 text-lg font-bold">
-            <span className="inline-block h-3.5 w-3.5 bg-[#15803D]" />
-            <span className="inline-block h-3.5 w-3.5 bg-[#B91C1C]" />
+            <img
+              src="/senedoch-logo.svg"
+              alt="Senedoch Logo"
+              className="h-8 w-8 shrink-0"
+            />
             <span>{lang === "am" ? t.brandAm : t.brandEn}</span>
           </Link>
         </div>
