@@ -6,8 +6,6 @@ import { TopBar } from "@/components/TopBar";
 import { Lang, UI_STRINGS } from "@/lib/i18n";
 import { SEED_CATEGORIES, SEED_TEMPLATES } from "@/data/seed-templates";
 
-
-
 export default function HomePage() {
   const [lang, setLang] = useState<Lang>("am");
   const [query, setQuery] = useState("");
@@ -49,7 +47,7 @@ export default function HomePage() {
   }, [categories, templates, query]);
 
   return (
-    <div className="min-h-screen bg-white text-[#0A0A0A]">
+    <div className="min-h-screen bg-white text-[#0A0A0A] dark:bg-neutral-950 dark:text-neutral-100">
       <TopBar
         lang={lang}
         onToggleLang={() => setLang((prev) => (prev === "am" ? "en" : "am"))}
@@ -63,7 +61,7 @@ export default function HomePage() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t.searchPlaceholder}
             aria-label={t.searchPlaceholder}
-            className="w-full border-2 border-[#0A0A0A] bg-white px-4 py-3 text-base text-[#0A0A0A] placeholder:text-neutral-500 focus:border-[#15803D] focus:outline-none"
+            className="w-full border-2 border-[#0A0A0A] bg-white px-4 py-3 text-base text-[#0A0A0A] placeholder:text-neutral-500 focus:border-[#15803D] focus:outline-none dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-400"
           />
         </div>
 
@@ -74,12 +72,12 @@ export default function HomePage() {
               <Link
                 key={cat.id}
                 href={`/templates/${cat.slug}`}
-                className="group flex flex-col justify-between border border-[#0A0A0A] bg-white p-5 hover:border-[#15803D]"
+                className="group flex flex-col justify-between border border-[#0A0A0A] bg-white p-5 hover:border-[#15803D] dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-emerald-500"
               >
                 <div>
                   <div className="mb-3 flex items-center justify-between">
                     <svg
-                      className="h-6 w-6 text-[#0A0A0A] group-hover:text-[#15803D]"
+                      className="h-6 w-6 text-[#0A0A0A] group-hover:text-[#15803D] dark:text-neutral-200 dark:group-hover:text-emerald-400"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -89,16 +87,16 @@ export default function HomePage() {
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <polyline points="14 2 14 8 20 8" />
                     </svg>
-                    <span className="text-xs font-bold text-[#B91C1C]">
+                    <span className="text-xs font-bold text-[#B91C1C] dark:text-red-400">
                       {t.templatesCount(count)}
                     </span>
                   </div>
 
-                  <h2 className="mb-2 text-base font-bold text-[#0A0A0A]">
+                  <h2 className="mb-2 text-base font-bold text-[#0A0A0A] dark:text-white">
                     {lang === "am" ? cat.titleAm : cat.titleEn}
                   </h2>
 
-                  <p className="text-sm leading-relaxed text-neutral-800">
+                  <p className="text-sm leading-relaxed text-neutral-800 dark:text-neutral-300">
                     {lang === "am" ? cat.oneSentenceAm : cat.oneSentenceEn}
                   </p>
                 </div>

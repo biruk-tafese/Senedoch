@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
+import { FiMoon, FiSun } from "react-icons/fi";
 import { Lang, UI_STRINGS } from "@/lib/i18n";
 import { SafeUser } from "@/lib/db/store";
 
@@ -13,6 +15,7 @@ interface TopBarProps {
 
 export function TopBar({ lang, onToggleLang, backHref }: TopBarProps) {
   const t = UI_STRINGS[lang];
+  const { resolvedTheme, setTheme } = useTheme();
   const [user, setUser] = useState<SafeUser | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -31,14 +34,23 @@ export function TopBar({ lang, onToggleLang, backHref }: TopBarProps) {
     setUser(null);
   };
 
+  const isDark = mounted && resolvedTheme === "dark";
+
+  const handleToggleTheme = () => {
+    const nextTheme = isDark ? "light" : "dark";
+    setTheme(nextTheme);
+    document.documentElement.classList.toggle("dark", nextTheme === "dark");
+    document.documentElement.style.colorScheme = nextTheme;
+  };
+
   return (
-    <header className="border-b border-[#0A0A0A] bg-white">
+    <header className="border-b border-[#0A0A0A] bg-white text-[#0A0A0A] dark:border-white dark:bg-[#0A0A0A] dark:text-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3.5">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {backHref && (
             <Link
               href={backHref}
-              className="border border-[#0A0A0A] px-2.5 py-1 text-xs font-semibold hover:bg-[#0A0A0A] hover:text-white"
+              className="border border-[#0A0A0A] px-2.5 py-1 text-xs font-semibold hover:border-[#15803D] hover:bg-[#15803D] hover:text-white dark:border-white dark:hover:border-[#15803D] dark:hover:bg-[#15803D]"
             >
               ← {t.backHome}
             </Link>
@@ -53,10 +65,10 @@ export function TopBar({ lang, onToggleLang, backHref }: TopBarProps) {
           </Link>
         </div>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex flex-wrap items-center gap-2">
           <Link
             href="/upload"
-            className="border border-[#0A0A0A] px-3 py-1.5 text-xs font-semibold hover:bg-[#0A0A0A] hover:text-white"
+            className="border border-[#0A0A0A] px-3 py-1.5 text-xs font-semibold hover:border-[#15803D] hover:bg-[#15803D] hover:text-white dark:border-white dark:hover:border-[#15803D] dark:hover:bg-[#15803D]"
           >
             {t.uploadSample}
           </Link>
@@ -78,13 +90,13 @@ export function TopBar({ lang, onToggleLang, backHref }: TopBarProps) {
             <>
               <Link
                 href="/login"
-                className="border border-[#0A0A0A] px-3 py-1.5 text-xs font-semibold hover:bg-[#0A0A0A] hover:text-white"
+                className="border border-[#0A0A0A] px-3 py-1.5 text-xs font-semibold hover:border-[#15803D] hover:bg-[#15803D] hover:text-white dark:border-white dark:hover:border-[#15803D] dark:hover:bg-[#15803D]"
               >
                 {t.login}
               </Link>
               <Link
                 href="/signup"
-                className="border border-[#0A0A0A] px-3 py-1.5 text-xs font-semibold hover:bg-[#0A0A0A] hover:text-white"
+                className="border border-[#0A0A0A] px-3 py-1.5 text-xs font-semibold hover:border-[#15803D] hover:bg-[#15803D] hover:text-white dark:border-white dark:hover:border-[#15803D] dark:hover:bg-[#15803D]"
               >
                 {t.signup}
               </Link>
@@ -93,8 +105,31 @@ export function TopBar({ lang, onToggleLang, backHref }: TopBarProps) {
 
           <button
             type="button"
+            onClick={handleToggleTheme}
+            aria-label="Toggle light and dark theme"
+            className="inline-flex items-center gap-1.5 border border-[#0A0A0A] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#0A0A0A] hover:border-[#15803D] hover:bg-[#15803D] hover:text-white dark:border-white dark:bg-[#0A0A0A] dark:text-white dark:hover:border-[#15803D] dark:hover:bg-[#15803D]"
+          >
+            {mounted ? (
+              isDark ? (
+                <>
+                  <FiSun className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Light</span>
+                </>
+              ) : (
+                <>
+                  <FiMoon className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Dark</span>
+                </>
+              )
+            ) : (
+              <FiMoon className="h-3.5 w-3.5" aria-hidden="true" />
+            )}
+          </button>
+
+          <button
+            type="button"
             onClick={onToggleLang}
-            className="border border-[#15803D] bg-[#15803D] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#0A0A0A] hover:border-[#0A0A0A]"
+            className="border border-[#15803D] bg-[#15803D] px-3 py-1.5 text-xs font-bold text-white hover:border-[#B91C1C] hover:bg-[#B91C1C]"
           >
             {lang === "am" ? "EN" : "አማ"}
           </button>

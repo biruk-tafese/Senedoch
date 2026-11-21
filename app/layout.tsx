@@ -1,25 +1,10 @@
 ﻿import type { Metadata } from "next";
-import { Noto_Sans_Ethiopic, Inter } from "next/font/google";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
-const notoEthiopic = Noto_Sans_Ethiopic({
-  subsets: ["ethiopic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-ethiopic",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
 export const metadata: Metadata = {
-  title: "ሰነዶች | Senedoch",
-  description:
-    "የሰነዶች ማረጋገጫና ምዝገባ (DARS) የአማርኛ ሰነድ ቅጾች — Editable & Free Amharic Legal Templates",
-  icons: {
-    icon: "/icon.svg",
-  },
+  title: "Senedoch",
+  description: "Amharic & English document templates",
 };
 
 export default function RootLayout({
@@ -28,12 +13,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="am" className={`${notoEthiopic.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html lang="am" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className="min-h-screen bg-white text-[#0A0A0A] antialiased font-[family-name:var(--font-ethiopic),var(--font-inter),sans-serif]"
+        className="bg-white text-[#0A0A0A] antialiased dark:bg-[#0A0A0A] dark:text-white"
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
