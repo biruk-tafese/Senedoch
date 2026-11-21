@@ -1,68 +1,111 @@
-import Image from "next/image";
+﻿"use client";
 
-export default function Home() {
+import React, { useMemo, useState } from "react";
+import Link from "next/link";
+import { TopBar } from "@/components/TopBar";
+import { Lang, UI_STRINGS } from "@/lib/i18n";
+import { SEED_CATEGORIES, SEED_TEMPLATES } from "@/data/seed-templates";
+
+
+
+export default function HomePage() {
+  const [lang, setLang] = useState<Lang>("am");
+  const [query, setQuery] = useState("");
+  const categories = SEED_CATEGORIES;
+  const templates = SEED_TEMPLATES;
+
+  const t = UI_STRINGS[lang];
+
+  const countsByCategory = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const tpl of templates) {
+      map.set(tpl.categoryId, (map.get(tpl.categoryId) ?? 0) + 1);
+    }
+    return map;
+  }, [templates]);
+
+  const filteredCategories = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return categories;
+
+    return categories.filter((cat) => {
+      const catMatch =
+        cat.titleAm.toLowerCase().includes(q) ||
+        cat.titleEn.toLowerCase().includes(q) ||
+        cat.oneSentenceAm.toLowerCase().includes(q) ||
+        cat.oneSentenceEn.toLowerCase().includes(q);
+
+      const tplMatch = templates.some(
+        (tpl) =>
+          tpl.categoryId === cat.id &&
+          (tpl.titleAm.toLowerCase().includes(q) ||
+            tpl.titleEn.toLowerCase().includes(q) ||
+            tpl.purposeAm.toLowerCase().includes(q) ||
+            tpl.purposeEn.toLowerCase().includes(q))
+      );
+
+      return catMatch || tplMatch;
+    });
+  }, [categories, templates, query]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-white text-[#0A0A0A]">
+      <TopBar
+        lang={lang}
+        onToggleLang={() => setLang((prev) => (prev === "am" ? "en" : "am"))}
+      />
+
+      <main className="mx-auto max-w-6xl px-4 py-8">
+        <div className="mb-8">
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t.searchPlaceholder}
+            aria-label={t.searchPlaceholder}
+            className="w-full border-2 border-[#0A0A0A] bg-white px-4 py-3 text-base text-[#0A0A0A] placeholder:text-neutral-500 focus:border-[#15803D] focus:outline-none"
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredCategories.map((cat) => {
+            const count = countsByCategory.get(cat.id) ?? 0;
+            return (
+              <Link
+                key={cat.id}
+                href={`/templates/${cat.slug}`}
+                className="group flex flex-col justify-between border border-[#0A0A0A] bg-white p-5 hover:border-[#15803D]"
+              >
+                <div>
+                  <div className="mb-3 flex items-center justify-between">
+                    <svg
+                      className="h-6 w-6 text-[#0A0A0A] group-hover:text-[#15803D]"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      aria-hidden="true"
+                    >
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    <span className="text-xs font-bold text-[#B91C1C]">
+                      {t.templatesCount(count)}
+                    </span>
+                  </div>
+
+                  <h2 className="mb-2 text-base font-bold text-[#0A0A0A]">
+                    {lang === "am" ? cat.titleAm : cat.titleEn}
+                  </h2>
+
+                  <p className="text-sm leading-relaxed text-neutral-800">
+                    {lang === "am" ? cat.oneSentenceAm : cat.oneSentenceEn}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </section>
       </main>
     </div>
   );
